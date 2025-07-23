@@ -61,6 +61,11 @@ path: '/delete/:id',
   name: 'TransferRequest',
   component: () => import('@/views/TransferRequest.vue')
 },
+{
+  path: '/report-damage-item',
+  name: 'ReportDamage',
+  component: () => import('@/views/ReportDamageItem.vue')
+}.
 
 ]
 
