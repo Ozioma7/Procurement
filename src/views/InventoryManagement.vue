@@ -48,12 +48,13 @@
   Transfer request
 </router-link>
 
-        <button
-          v-if="activeTab === 'Damaged stock'"
-          class="bg-[#D50036] text-white px-4 py-2 rounded shadow whitespace-nowrap"
-        >
-          Report damaged
-        </button>
+        <router-link
+  v-if="activeTab === 'Report Damage'"
+  to="/report-damage-item"
+  class="bg-[#D50036] text-white px-4 py-2 rounded shadow whitespace-nowrap text-center"
+>
+  Report Damage
+</router-link>
       </div>
     </div>
 

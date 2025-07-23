@@ -65,7 +65,7 @@ path: '/delete/:id',
   path: '/report-damage-item',
   name: 'ReportDamage',
   component: () => import('@/views/ReportDamageItem.vue')
-}.
+},
 
 ]
 
