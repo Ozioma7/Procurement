@@ -8,7 +8,7 @@
         <button class="text-gray-600 hover:text-[#D50036] text-xl">🔔</button>
         <div class="flex items-center gap-2">
           <img
-            src="https://i.pravatar.cc/40?img=1"
+            src="../assets/images/profile.png"
             alt="Profile"
             class="rounded-full w-10 h-10 border"
           />
@@ -64,8 +64,6 @@
 
     <!-- Transaction Logs Table (conditional) -->
     <TransactionLogs v-if="showTransactions" />
-
-    <InventoryManagement />
   </div>
 </template>
 
@@ -75,9 +73,8 @@ import DashboardCard from '@/components/DashboardCard.vue'
 import DashboardCharts from '@/components/DashboardCharts.vue'
 import PurchaseRequestModal from '@/components/PurchaseRequestModal.vue'
 import TransactionLogs from '@/views/TransactionLogs.vue'
-import InventoryManagement from '@/views/InventoryManagement.vue'
 
-const showModal = ref(false)
+const showItemDetail = ref(false)
 const showTransactions = ref(false)
 
 const toggleModal = () => {

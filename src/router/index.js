@@ -6,6 +6,7 @@ import TransactionLogs from '@/views/TransactionLogs.vue'
 import StockAvailability from '@/views/StockAvailability.vue'
 import InventoryManagement from '@/views/InventoryManagement.vue'
 
+
 const routes = [
   {
     path: '/',
@@ -37,6 +38,12 @@ const routes = [
     name: 'InventoryManagement',
     component: InventoryManagement
   },
+  {
+  path: '/item/:id',
+  name: 'ItemDetail',
+  component: () => import('@/components/ItemDetail.vue'),
+  props: true
+}
 ]
 
 const router = createRouter({

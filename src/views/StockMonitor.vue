@@ -4,8 +4,8 @@
     <div class="bg-white p-4 rounded-xl shadow mb-6 flex justify-between items-center">
       <h1 class="text-xl font-semibold text-gray-800">Stock Monitoring Re-order</h1>
       <div class="flex items-center gap-4">
-        <button class="text-gray-600 hover:text-[#D50036] text-xl">🔔</button>
-        <div class="flex items-center gap-2">
+        <button class="text-gray-600 hover:text-[#D50036] text-xl" aria-label="Notifications">🔔</button>
+        <div class="flex items-center gap-2 cursor-pointer select-none">
           <span class="font-medium text-sm">John Doe</span>
           <span class="text-gray-500">▼</span>
         </div>
@@ -13,7 +13,9 @@
     </div>
 
     <!-- Search & Filter -->
-    <div class="bg-white p-4 rounded-xl shadow mb-6 flex flex-col lg:flex-row justify-between items-center gap-4">
+    <div
+      class="bg-white p-4 rounded-xl shadow mb-6 flex flex-col lg:flex-row justify-between items-center gap-4"
+    >
       <div class="flex items-center gap-2 w-full lg:w-2/3">
         <input
           v-model="searchQuery"
@@ -64,7 +66,7 @@
         <button
           @click="openConfirmationModal"
           :disabled="!selectedItems.length"
-          class="bg-[#D50036] text-white px-4 py-2 rounded-lg text-sm hover:opacity-90 transition"
+          class="bg-[#D50036] text-white px-4 py-2 rounded-lg text-sm hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Re-order
         </button>
@@ -76,52 +78,75 @@
       <table class="min-w-full text-sm">
         <thead class="bg-gray-100 text-left">
           <tr>
-            <th class="p-3"><input type="checkbox" @change="toggleAll" :checked="allSelected" /></th>
-            <th class="p-3">Item Name</th>
-            <th class="p-3">Category</th>
-            <th class="p-3">Stock Level</th>
-            <th class="p-3">Min Threshold</th>
-            <th class="p-3">Max Threshold</th>
-            <th class="p-3">Status</th>
-            <th class="p-3">Location</th>
-            <th class="p-3">Vendor</th>
-            <th class="p-3">Action</th>
+            <th class="p-3">
+              <input
+                type="checkbox"
+                @change="toggleAll"
+                :checked="allSelected"
+                aria-label="Select All"
+              />
+            </th>
+            <th class="p-3">ITEM NAME</th>
+            <th class="p-3">CATEGORY</th>
+            <th class="p-3">STOCK LEVEL</th>
+            <th class="p-3">MIN THRESHOLD</th>
+            <th class="p-3">MAX THRESHOLD</th>
+            <th class="p-3">STATUS</th>
+            <th class="p-3">LOCATION</th>
+            <th class="p-3">VENDOR</th>
+            <th class="p-3">ACTION</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="item in paginatedItems" :key="item.id" class="border-t hover:bg-gray-50">
+          <tr
+            v-for="item in paginatedItemsWithStatus"
+            :key="item.id"
+            class="border-t hover:bg-gray-50"
+          >
             <td class="p-3">
-              <input type="checkbox" :value="item.id" v-model="selectedItems" />
+              <input
+                type="checkbox"
+                :value="item.id"
+                v-model="selectedItems"
+                :aria-label="'Select ' + item.name"
+              />
             </td>
             <td class="p-3">{{ item.name }}</td>
             <td class="p-3">{{ item.category }}</td>
             <td class="p-3">{{ item.stock }}</td>
             <td class="p-3">{{ item.min }}</td>
             <td class="p-3">{{ item.max }}</td>
-            <td class="p-3">
-              <span
-                :class="[ 'px-2 py-1 rounded-full border text-xs font-medium',
-                  item.stock < item.min
-                    ? 'text-red-600 border-red-600'
-                    : item.stock <= item.min + 10
-                    ? 'text-yellow-600 border-yellow-600'
-                    : 'text-green-600 border-green-600'
-                ]"
-              >
-                {{
-                  item.stock < item.min
-                    ? 'Out of stock'
-                    : item.stock <= item.min + 10
-                    ? 'Low in stock'
-                    : 'Highly stocked'
-                }}
-              </span>
-            </td>
+            <td class="p-3 whitespace-nowrap">
+  <span
+    :class="[
+      'px-2 py-1 rounded-full border text-xs font-medium',
+      item.status === 'Out of stock'
+        ? 'text-red-600 border-red-600'
+        : item.status === 'Low in stock'
+        ? 'text-yellow-600 border-yellow-600'
+        : 'text-green-600 border-green-600',
+    ]"
+  >
+    {{ item.status }}
+  </span>
+</td>
+
             <td class="p-3">{{ item.location }}</td>
             <td class="p-3">{{ item.vendor }}</td>
             <td class="p-3">
-              <button @click="viewItem(item)" class="text-gray-600 hover:text-[#D50036] text-lg">👁️</button>
+              <button
+                @click="viewItem(item, 'reorder')"
+                class="hover:text-blue-600"
+                :aria-label="'View Details of ' + item.name"
+              >
+                👁️ View
+              </button>
             </td>
+          </tr>
+          <tr v-if="!paginatedItemsWithStatus.length">
+            <td colspan="10" class="p-4 text-center text-gray-500"
+              >No items found.</td
+            >
           </tr>
         </tbody>
       </table>
@@ -129,9 +154,21 @@
 
     <!-- Pagination -->
     <div class="flex justify-end mt-4 gap-2">
-      <button class="px-3 py-1 border rounded" @click="prevPage" :disabled="page === 1">Prev</button>
+      <button
+        class="px-3 py-1 border rounded disabled:opacity-50 disabled:cursor-not-allowed"
+        @click="prevPage"
+        :disabled="page === 1"
+      >
+        Prev
+      </button>
       <span class="text-sm px-2">Page {{ page }}</span>
-      <button class="px-3 py-1 border rounded" @click="nextPage" :disabled="endIndex >= filteredItems.length">Next</button>
+      <button
+        class="px-3 py-1 border rounded disabled:opacity-50 disabled:cursor-not-allowed"
+        @click="nextPage"
+        :disabled="endIndex >= filteredItems.length"
+      >
+        Next
+      </button>
     </div>
 
     <!-- Modals -->
@@ -148,6 +185,13 @@
       @cancel="showConfirmationModal = false"
       @confirm="confirmReorder"
     />
+
+    <ItemDetailModal
+      v-if="showItemDetail"
+      :item="selectedItem"
+      :context="modalContext"
+      @close="showItemDetail = false"
+    />
   </div>
 </template>
 
@@ -155,6 +199,7 @@
 import { ref, computed } from 'vue'
 import ReorderFormModal from '@/components/ReorderFormModal.vue'
 import ConfirmationModal from '@/components/ConfirmationModal.vue'
+import ItemDetailModal from '@/components/ItemDetailModal.vue'
 
 // Reactive states
 const items = ref([
@@ -186,18 +231,23 @@ const selectedItems = ref([])
 const selectedReorderItems = ref([])
 const showReorderForm = ref(false)
 const showConfirmationModal = ref(false)
+const showItemDetail = ref(false)
+const selectedItem = ref(null)
+
+// The important part: context string for modal
+const modalContext = ref('stock')
 
 const page = ref(1)
 const perPage = 10
 const startIndex = computed(() => (page.value - 1) * perPage)
 const endIndex = computed(() => startIndex.value + perPage)
 
-// Unique values
+// Unique values for filters
 const uniqueCategories = computed(() => [...new Set(items.value.map(i => i.category))])
 const uniqueLocations = computed(() => [...new Set(items.value.map(i => i.location))])
 const uniqueVendors = computed(() => [...new Set(items.value.map(i => i.vendor))])
 
-// Filtered items
+// Filtered items based on search and filter select
 const filteredItems = computed(() => {
   const query = searchQuery.value.toLowerCase().trim()
   const [filterType, filterValue] = selectedFilter.value.split(':')
@@ -219,23 +269,37 @@ const filteredItems = computed(() => {
   })
 })
 
-const paginatedItems = computed(() =>
-  filteredItems.value.slice(startIndex.value, endIndex.value)
+// Compute paginated items WITH the status property added
+const paginatedItemsWithStatus = computed(() =>
+  filteredItems.value
+    .map(item => {
+      let status = ''
+      if (item.stock < item.min) status = 'Out of stock'
+      else if (item.stock <= item.min + 10) status = 'Low in stock'
+      else status = 'Highly stocked'
+
+      return {
+        ...item,
+        status,
+      }
+    })
+    .slice(startIndex.value, endIndex.value)
 )
 
+// Check if all items on current page are selected
 const allSelected = computed(() =>
-  paginatedItems.value.every(i => selectedItems.value.includes(i.id))
+  paginatedItemsWithStatus.value.length > 0 &&
+  paginatedItemsWithStatus.value.every(i => selectedItems.value.includes(i.id))
 )
 
-// Events
+// Select/deselect all items on current page
 function toggleAll(e) {
   if (e.target.checked) {
-    const ids = paginatedItems.value.map(i => i.id)
-    selectedItems.value = [...new Set([...selectedItems.value, ...ids])]
+    const ids = paginatedItemsWithStatus.value.map(i => i.id)
+    selectedItems.value = Array.from(new Set([...selectedItems.value, ...ids]))
   } else {
-    selectedItems.value = selectedItems.value.filter(
-      id => !paginatedItems.value.map(i => i.id).includes(id)
-    )
+    const currentPageIds = paginatedItemsWithStatus.value.map(i => i.id)
+    selectedItems.value = selectedItems.value.filter(id => !currentPageIds.includes(id))
   }
 }
 
@@ -244,9 +308,7 @@ function openConfirmationModal() {
 }
 
 function confirmReorder() {
-  selectedReorderItems.value = items.value.filter(item =>
-    selectedItems.value.includes(item.id)
-  )
+  selectedReorderItems.value = items.value.filter(item => selectedItems.value.includes(item.id))
   showConfirmationModal.value = false
   showReorderForm.value = true
 }
@@ -257,15 +319,18 @@ function handleReorderSubmit(data) {
   showReorderForm.value = false
 }
 
-function viewItem(item) {
-  alert(`👁️ Viewing: ${item.name}`)
-}
-
 function nextPage() {
   if (endIndex.value < filteredItems.value.length) page.value++
 }
 
 function prevPage() {
   if (page.value > 1) page.value--
+}
+
+// Show item detail modal with the item data (including status)
+function viewItem(item) {
+  selectedItem.value = item
+  modalContext.value = 'stock' // or other context if needed
+  showItemDetail.value = true
 }
 </script>
