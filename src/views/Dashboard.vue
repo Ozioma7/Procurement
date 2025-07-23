@@ -58,7 +58,7 @@
     <!-- Purchase Request Modal -->
     <PurchaseRequestModal
       :isOpen="showModal"
-      :onClose="closeModal"
+      @close="closeModal"
       @submitted="handleSubmit"
     />
 
@@ -74,7 +74,7 @@ import DashboardCharts from '@/components/DashboardCharts.vue'
 import PurchaseRequestModal from '@/components/PurchaseRequestModal.vue'
 import TransactionLogs from '@/views/TransactionLogs.vue'
 
-const showItemDetail = ref(false)
+const showModal = ref(false)
 const showTransactions = ref(false)
 
 const toggleModal = () => {

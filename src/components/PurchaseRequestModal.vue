@@ -2,7 +2,6 @@
   <div v-if="isOpen" class="fixed inset-0 z-50 bg-black bg-opacity-50 flex justify-center items-center">
     <div class="bg-white w-full max-w-md rounded-xl p-6 relative">
       <h2 class="text-lg font-semibold mb-4">Create purchase request</h2>
-
       <p class="text-sm text-gray-600 mb-4">Fill the form to complete your purchase request</p>
 
       <form @submit.prevent="handleSubmit" class="space-y-4">
