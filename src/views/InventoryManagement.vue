@@ -40,13 +40,14 @@
           <option v-for="loc in locations" :key="loc" :value="loc">{{ loc }}</option>
         </select>
 
-        <button
-          v-if="activeTab === 'Stock transfers'"
-          class="bg-[#D50036] text-white px-4 py-2 rounded shadow whitespace-nowrap"
-          @click="showTransferModal = true"
-        >
-          Transfer request
-        </button>
+        <router-link
+  v-if="activeTab === 'Stock transfers'"
+  to="/transfer-request"
+  class="bg-[#D50036] text-white px-4 py-2 rounded shadow whitespace-nowrap text-center"
+>
+  Transfer request
+</router-link>
+
         <button
           v-if="activeTab === 'Damaged stock'"
           class="bg-[#D50036] text-white px-4 py-2 rounded shadow whitespace-nowrap"

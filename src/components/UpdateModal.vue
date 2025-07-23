@@ -7,15 +7,18 @@
       class="bg-white rounded-xl shadow-lg w-full max-w-xl p-6"
       :style="{ maxHeight: '90vh', overflowY: 'auto' }"
     >
-      <PurchaseForm @submit="handleSubmit" @close="$emit('close')" />
+      <UpdateForm :item="item" @submit="handleSubmit" @close="$emit('close')" />
     </div>
   </div>
 </template>
 
 <script setup>
-import PurchaseForm from '@/views/PurchaseForm.vue'
+import UpdateForm from '../views/UpdateForm.vue'
 
 const emit = defineEmits(['close', 'submitted'])
+const props = defineProps({
+  item: Object
+})
 
 function handleSubmit(data) {
   emit('submitted', data)

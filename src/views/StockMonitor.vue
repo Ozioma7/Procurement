@@ -186,12 +186,6 @@
       @confirm="confirmReorder"
     />
 
-    <ItemDetailModal
-      v-if="showItemDetail"
-      :item="selectedItem"
-      :context="modalContext"
-      @close="showItemDetail = false"
-    />
   </div>
 </template>
 
@@ -312,12 +306,21 @@ function confirmReorder() {
   showConfirmationModal.value = false
   showReorderForm.value = true
 }
-
 function handleReorderSubmit(data) {
+  // Update stock values in the main items list
+  data.forEach(updatedItem => {
+    const index = items.value.findIndex(item => item.id === updatedItem.id)
+    if (index !== -1) {
+      // You can choose to replace just quantity or actual stock — here, assuming it's "stock"
+      items.value[index].stock += updatedItem.quantity // or = updatedItem.quantity
+    }
+  })
+
   console.log('✅ Reordered:', data)
   selectedItems.value = []
   showReorderForm.value = false
 }
+
 
 function nextPage() {
   if (endIndex.value < filteredItems.value.length) page.value++

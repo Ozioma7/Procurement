@@ -30,9 +30,12 @@
           <option v-for="category in categories" :key="category">{{ category }}</option>
         </select>
       </div>
-      <button class="bg-[#D50036] text-white px-4 py-2 rounded-lg text-sm hover:opacity-90 transition">
+      <router-link
+        to="/update-form"
+        class="bg-[#D50036] text-white px-4 py-2 rounded-lg text-sm hover:opacity-90 transition text-center"
+      >
         Update Items
-      </button>
+      </router-link>
     </div>
 
     <!-- Table -->
@@ -50,6 +53,7 @@
             <th class="p-3">Last Stocked</th>
             <th class="p-3">Time</th>
             <th class="p-3">View</th>
+            <th class="p-3">Delete</th>
           </tr>
         </thead>
         <tbody>
@@ -64,9 +68,7 @@
               <span
                 :class="[
                   'px-3 py-1 rounded-full text-xs font-medium border',
-                  item.threshold >= 50
-                    ? 'text-green-600 border-green-600'
-                    : 'text-red-600 border-red-600'
+                  item.threshold >= 50 ? 'text-green-600 border-green-600' : 'text-red-600 border-red-600'
                 ]"
               >
                 {{ item.threshold >= 50 ? 'Sufficient' : 'Low' }}
@@ -76,6 +78,11 @@
             <td class="p-3">{{ item.time }}</td>
             <td class="p-3">
               <button @click="viewItem(item)" class="hover:text-blue-600">👁️ View</button>
+            </td>
+            <td class="p-3">
+              <router-link :to="`/delete/${item.id}`" class="text-red-500 hover:underline">
+                Delete
+              </router-link>
             </td>
           </tr>
         </tbody>
@@ -115,13 +122,13 @@
 
 <script setup>
 import { ref, computed } from 'vue'
+import { useRouter } from 'vue-router'
 import ItemDetailModal from '@/components/ItemDetailModal.vue'
 
 const search = ref('')
 const selectedCategory = ref('')
 const page = ref(1)
 const perPage = 5
-
 const showItemDetail = ref(false)
 const selectedItem = ref(null)
 
